@@ -11,6 +11,7 @@ import (
 )
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
+const PORT = ":42069"
 
 // Progress is used to track the progress of a file upload.
 // It implements the io.Writer interface so it can be passed
@@ -82,8 +83,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		filetype := http.DetectContentType(buff)
-		if filetype != "image/jpeg" && filetype != "image/png" {
-			http.Error(w, "The provided file format is not allowed. Please upload a JPEG or PNG image", http.StatusBadRequest)
+		if filetype != "image/jpeg" && filetype != "image/png" && filetype != "application/pdf"{
+			http.Error(w, "The provided file format is not allowed. Please upload a JPEG,PNG image or a pdf document", http.StatusBadRequest)
 			return
 		}
 
@@ -124,9 +125,9 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", IndexHandler)
-	mux.HandleFunc("/upload", uploadHandler)
+	mux.HandleFunc("/api/pm/upload", uploadHandler)
 
-	if err := http.ListenAndServe(":4500", mux); err != nil {
+	if err := http.ListenAndServe(PORT, mux); err != nil {
 		log.Fatal(err)
 	}
 }
